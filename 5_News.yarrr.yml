@@ -1,0 +1,34 @@
+
+prefixes:
+  ex: http://www.example.com/
+  rdfs: "http://www.w3.org/2000/01/rdf-schema#"
+  xsd: "http://www.w3.org/2001/XMLSchema#"
+  schema: "http://schema.org/"
+  dbo: "http://dbpedia.org/ontology/"
+
+mappings:
+  news:
+    sources:
+      - [data/news_stanza.json~jsonpath, "$.Stanza[*]"]
+    s: ex:News/$(news_id)
+    po:
+      - [a, schema:NewsArticle]
+      - [schema:identifier, $(news_id), xsd:integer]
+      - [schema:articleBody, $(text)]
+      - [schema:datePublished, $(schema_DateTime), schema:DateTime]
+      - [schema:author, $(author)]
+      - [schema:url, $(url)]
+      - [ex:entities, ex:Entity/$(entities)~iri]
+  entities:
+    sources:
+      - [data/entities_wikified_checked.json~jsonpath, "$.checked[*]"]
+    s: ex:Entity/$(id)
+    po:
+      - [a, ex:Entity]
+      - [schema:identifier, $(id), xsd:integer]
+      - [rdfs:label, $(text), xsd:string]
+      - [ex:news_ids, ex:News/$(news_ids)~iri]
+      - [owl:sameAs, $(dbpedia_Resource)~iri]
+
+      
+      
